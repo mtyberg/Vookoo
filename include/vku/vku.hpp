@@ -1323,7 +1323,9 @@ public:
   }
 
   /// Copy a subimage in a buffer to this image.
-  void copy(vk::CommandBuffer cb, vk::Buffer buffer, uint32_t mipLevel, uint32_t arrayLayer, uint32_t width, uint32_t height, uint32_t depth, uint32_t offset) { 
+  void copy(vk::CommandBuffer cb, vk::Buffer buffer, uint32_t mipLevel, uint32_t arrayLayer, uint32_t width, uint32_t height,
+      uint32_t depth, uint32_t offset, int32_t imageOffsetX = 0, int32_t imageOffsetY = 0)
+  {
     setLayout(cb, vk::ImageLayout::eTransferDstOptimal);
     vk::BufferImageCopy region{};
     region.bufferOffset = offset;
@@ -1333,6 +1335,7 @@ public:
     extent.depth = depth;
     region.imageSubresource = {vk::ImageAspectFlagBits::eColor, mipLevel, arrayLayer, 1};
     region.imageExtent = extent;
+    region.imageOffset = vk::Offset3D{imageOffsetX, imageOffsetY, 0};
     cb.copyBufferToImage(buffer, *s.image, vk::ImageLayout::eTransferDstOptimal, region);
   }
 
